@@ -31,7 +31,7 @@ public class TSWindow extends JFrame implements MouseListener, MouseMotionListen
 	public static final int BORDER_SIZE = 0;
 	public static final Color WINDOW_BACKGROUND = Design.DESIGN_COLOR;
 	
-	private JPanel contentView;
+	private TSWindowContent contentView;
 	private boolean addedContentView = false;
 	private boolean setLayout = false;
 	
@@ -59,7 +59,7 @@ public class TSWindow extends JFrame implements MouseListener, MouseMotionListen
 		this.titleBar = new TSWindowTitleBar(this);
 		this.addDirect(this.titleBar);
 		
-		this.contentView = new JPanel();
+		this.contentView = new TSWindowContent();
 		this.contentView.setSize(width, height);
 		this.contentView.setLocation(BORDER_SIZE, TITLE_BAR_HEIGHT + TITLE_BAR_BOTTOM_MARGIN);
 		this.contentView.setBackground(WINDOW_BACKGROUND);
@@ -78,6 +78,10 @@ public class TSWindow extends JFrame implements MouseListener, MouseMotionListen
 	public void paint(Graphics g) {
 		g.clearRect(0, 0, this.getWidth(), this.getHeight());
 		super.paint(g);
+	}
+	
+	public void addPaintListener(TSWindowPaintListener listener) {
+		this.contentView.addPaintListener(listener);
 	}
 	
 	private void addDirect(Component component) {

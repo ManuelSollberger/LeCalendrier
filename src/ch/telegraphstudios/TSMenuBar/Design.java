@@ -21,7 +21,7 @@ public class Design {
 	/**
 	 * This is the color to use for buttons, windows and other GUI elements.
 	 */
-	public static final Color DESIGN_COLOR = new Color(0x123456);
+	public static final Color DESIGN_COLOR = new Color(0x893434);
 	
 	/**
 	 * This is the color to use for labels, titles and other foreground elements.
