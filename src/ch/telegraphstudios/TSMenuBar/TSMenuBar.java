@@ -41,7 +41,7 @@ public class TSMenuBar extends JFrame implements MouseListener, WindowFocusListe
 	 * Instantiates a new menu bar. This should never be done externally because this is a singleton calss.
 	 * @param applicationName is the name of the application.
 	 */
-	public TSMenuBar(String applicationName) {
+	private TSMenuBar(String applicationName) {
 		this.applicationName = applicationName;
 		
 		this.setUndecorated(true);
@@ -50,20 +50,16 @@ public class TSMenuBar extends JFrame implements MouseListener, WindowFocusListe
 		this.setLayout(null);
 		this.setVisible(true);
 		this.setBackground(new Color(0, 0, 0, 1));
+		this.setAlwaysOnTop(true);
 		this.addMouseListener(this);
 		this.addWindowFocusListener(this);
-
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				addDefaultItems();
-			}
-		});
+		this.addDefaultItems();
 		
 		this.repaint();
 	}
 	
 	private void addDefaultItems() {
+		//Add application menu item first.
 		TSMenuBarApplicationItem applicationItem = new TSMenuBarApplicationItem(this.applicationName);
 		applicationMenu = new TSMenu();
 		
@@ -79,26 +75,32 @@ public class TSMenuBar extends JFrame implements MouseListener, WindowFocusListe
 		
 		applicationItem.setMenu(applicationMenu);
 		this.addMenuItem(applicationItem);
-		
-		//Add window menu
-		TSMenuBarItem windowItem = new TSMenuBarItem("Window");
-		windowMenu = new TSMenu();
-		
-		//Add center window item
-		TSMenuItem centerWindowItem = new TSMenuItem("Center window");
-		centerWindowItem.addMenuItemClickListener(new TSMenuItemClickListener() {
+
+		//Add window item later.
+		SwingUtilities.invokeLater(new Runnable() {
 			@Override
-			public void onClick() {
-				Dimension screenSize = Utils.getScreenSize();
-				if (lastFocusedWindow != null) {
-					lastFocusedWindow.setLocation(screenSize.width / 2 - (lastFocusedWindow.getWidth() / 2), screenSize.height / 2 - (lastFocusedWindow.getHeight() / 2));
-				}
+			public void run() {
+				//Add window menu
+				TSMenuBarItem windowItem = new TSMenuBarItem("Window");
+				windowMenu = new TSMenu();
+				
+				//Add center window item
+				TSMenuItem centerWindowItem = new TSMenuItem("Center window");
+				centerWindowItem.addMenuItemClickListener(new TSMenuItemClickListener() {
+					@Override
+					public void onClick() {
+						Dimension screenSize = Utils.getScreenSize();
+						if (lastFocusedWindow != null) {
+							lastFocusedWindow.setLocation(screenSize.width / 2 - (lastFocusedWindow.getWidth() / 2), screenSize.height / 2 - (lastFocusedWindow.getHeight() / 2));
+						}
+					}
+				});
+				windowMenu.addItem(centerWindowItem);
+				
+				windowItem.setMenu(windowMenu);
+				addMenuItem(windowItem);
 			}
 		});
-		windowMenu.addItem(centerWindowItem);
-		
-		windowItem.setMenu(windowMenu);
-		this.addMenuItem(windowItem);
 	}
 	
 	@Override
@@ -166,7 +168,7 @@ public class TSMenuBar extends JFrame implements MouseListener, WindowFocusListe
 		}
 		
 		if (this.selectedItem != null) {
-			this.setSize(Utils.getScreenSize());
+			//this.setSize(Utils.getScreenSize());
 		}
 		else {
 			this.setSize(this.getWidth(), MENU_BAR_HEIGHT);
@@ -187,9 +189,14 @@ public class TSMenuBar extends JFrame implements MouseListener, WindowFocusListe
 	public boolean isMenuOpened() {
 		return (this.selectedItem != null);
 	}
+
+	private void setApplicationName(String applicationName) {
+		this.applicationName = applicationName;
+	}
 	
 	public static TSMenuBar getInstance() {
 		if (INSTANCE == null) {
+			INSTANCE = new TSMenuBar("Application");
 			//Throw an exception if the menu bar is not initialized.
 			try {
 				throw new Exception("TSMenuBar not initialized for this application! Call TSMenuBar.initialize() before using it!");
@@ -201,10 +208,22 @@ public class TSMenuBar extends JFrame implements MouseListener, WindowFocusListe
 	}
 	
 	/**
+	 * @return true if the menu bar is initialized; false if not.
+	 */
+	public static boolean isInitialized() {
+		return (INSTANCE != null);
+	}
+	
+	/**
 	 * You must call this method before expecting any menu bar to appear!
 	 */
 	public static void initialize(String applicationName) {
-		INSTANCE = new TSMenuBar(applicationName);
+		if (INSTANCE == null) {
+			INSTANCE = new TSMenuBar(applicationName);
+		}
+		else {
+			INSTANCE.setApplicationName(applicationName);
+		}
 	}
 
 	@Override

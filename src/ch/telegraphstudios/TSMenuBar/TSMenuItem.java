@@ -89,12 +89,12 @@ public class TSMenuItem extends JPanel implements MouseListener {
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		TSMenuBar.getInstance().setSelectedItem(null);
+		this.menu.close();
+		
 		for (TSMenuItemClickListener clickListener : clickListeners) {
 			clickListener.onClick();
 		}
-		
-		TSMenuBar.getInstance().setSelectedItem(null);
-		this.menu.close();
 	}
 
 	@Override

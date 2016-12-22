@@ -21,7 +21,7 @@ import javax.swing.JRootPane;
  * This automatically sets up a title bar with a title and two window buttons (close and minimize).
  * Resizing is not supported as it is not needed by this application.
  */
-public class TSWindow extends JFrame implements MouseListener, MouseMotionListener, WindowFocusListener {
+public class TSWindow extends JFrame implements MouseMotionListener, WindowFocusListener {
 
 	public static final int DEFAULT_WIDTH = 960;
 	public static final int DEFAULT_HEIGHT = 520;
@@ -31,7 +31,7 @@ public class TSWindow extends JFrame implements MouseListener, MouseMotionListen
 	public static final int BORDER_SIZE = 0;
 	public static final Color WINDOW_BACKGROUND = Design.DESIGN_COLOR;
 	
-	private TSWindowContent contentView;
+	protected TSWindowContent contentView;
 	private boolean addedContentView = false;
 	private boolean setLayout = false;
 	
@@ -107,6 +107,20 @@ public class TSWindow extends JFrame implements MouseListener, MouseMotionListen
 	}
 	
 	@Override
+	public void setType(Type type) {
+		super.setType(type);
+		
+		if (type == Type.UTILITY) {
+			this.setAlwaysOnTop(true);
+			this.setFocusableWindowState(false);
+		}
+		else {
+			this.setAlwaysOnTop(false);
+			this.setFocusableWindowState(true);
+		}
+	}
+	
+	@Override
 	public Component add(Component component) {
 		if (!this.addedContentView) {
 			this.addedContentView = true;
@@ -165,42 +179,39 @@ public class TSWindow extends JFrame implements MouseListener, MouseMotionListen
 	}
 
 	@Override
-	public void mouseDragged(MouseEvent e) { }
-
-	@Override
-	public void mouseMoved(MouseEvent e) { }
-
-	@Override
-	public void mouseClicked(MouseEvent e) { }
-
-	@Override
-	public void mousePressed(MouseEvent e) { }
-
-	@Override
-	public void mouseReleased(MouseEvent e) { }
-
-	@Override
-	public void mouseEntered(MouseEvent e) { }
-
-	@Override
-	public void mouseExited(MouseEvent e) { }
-
-	@Override
 	public void windowGainedFocus(WindowEvent e) {
-		if (!this.children.contains(e.getOppositeWindow()) && !TSMenuBar.getInstance().equals(e.getOppositeWindow()) && this.getType() != Type.UTILITY) {
+		if (!this.children.contains(e.getOppositeWindow()) && !TSMenuBar.getInstance().equals(e.getOppositeWindow())) {
 			for (TSWindow child : this.children) {
-				if (child.isVisible()) {
+				if (child.getType() == Type.UTILITY) {
 					child.setVisible(true);
 				}
 			}
 			
+			TSMenuBar.getInstance().setLastFocusedWindow(e.getWindow());
+
+			TSMenuBar.getInstance().setFocusableWindowState(false);
 			TSMenuBar.getInstance().setVisible(true);
+			TSMenuBar.getInstance().setFocusableWindowState(true);
 		}
 	}
 
 	@Override
 	public void windowLostFocus(WindowEvent e) {
 		TSMenuBar.getInstance().setLastFocusedWindow(null);
+		
+		if (!this.children.contains(e.getOppositeWindow()) && !TSMenuBar.getInstance().equals(e.getOppositeWindow()) || e.getOppositeWindow() == null) {
+			for (TSWindow child : this.children) {
+				if (child.getType() == Type.UTILITY) {
+					child.setVisible(false);
+				}
+			}
+		}
 	}
+
+	@Override
+	public void mouseDragged(MouseEvent arg0) { }
+
+	@Override
+	public void mouseMoved(MouseEvent arg0) { }
 	
 }

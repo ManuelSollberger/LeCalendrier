@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 public class TSMenu extends JFrame implements WindowFocusListener, MouseListener {
 	
 	private ArrayList<TSMenuItem> items = new ArrayList<TSMenuItem>();
+	int offsetX = 0;
 	
 	public TSMenu() {
 		this.setUndecorated(true);
@@ -26,6 +27,7 @@ public class TSMenu extends JFrame implements WindowFocusListener, MouseListener
 		this.addMouseListener(this);
 		this.setLayout(null);
 		this.setFocusable(false);
+		this.setAlwaysOnTop(true);
 		
 		//Create content view
 		TSMenuContent content = new TSMenuContent(this);
@@ -37,7 +39,7 @@ public class TSMenu extends JFrame implements WindowFocusListener, MouseListener
 		item.setMenu(this);
 		
 		Dimension currentSize = this.updateSize();
-		item.setLocation(0, currentSize.height + TSMenuItem.MENU_ITEM_TOP_MARGIN);
+		item.setLocation(this.offsetX, currentSize.height + TSMenuItem.MENU_ITEM_TOP_MARGIN);
 		
 		this.items.add(item);
 		this.add(item);
@@ -50,7 +52,13 @@ public class TSMenu extends JFrame implements WindowFocusListener, MouseListener
 	
 	public void open(Point origin) {
 		if (!this.isVisible()) {
-			this.setLocation(origin);
+			this.setLocation(0, origin.y);
+			this.offsetX = origin.x;
+			
+			for (TSMenuItem item : items) {
+				item.setLocation(this.offsetX, item.getY());
+			}
+			
 			this.setVisible(true);
 		}
 	}
@@ -130,8 +138,8 @@ class TSMenuContent extends JPanel {
 		Dimension menuSize = menu.updateSize();
 		
 		g2d.setColor(Design.DESIGN_COLOR);
-		g2d.fillRoundRect(0, 0, menuSize.width, menuSize.height + (2 * TSMenuItem.MENU_ITEM_TOP_MARGIN), TSMenuItem.MENU_ITEM_TOP_MARGIN, TSMenuItem.MENU_ITEM_TOP_MARGIN);
-		//g2d.fillRect(0, 0, menuSize.width, menuSize.height);
+		g2d.fillRoundRect(this.menu.offsetX, 0, menuSize.width, menuSize.height + (2 * TSMenuItem.MENU_ITEM_TOP_MARGIN), TSMenuItem.MENU_ITEM_TOP_MARGIN, TSMenuItem.MENU_ITEM_TOP_MARGIN);
+		//g2d.fillRect(this.menu.offsetX, 0, menuSize.width, menuSize.height);
 	}
 	
 }

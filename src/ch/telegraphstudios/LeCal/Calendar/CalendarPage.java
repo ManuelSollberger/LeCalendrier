@@ -14,11 +14,23 @@ public class CalendarPage {
 	private ArrayList<BufferedImage> dropZoneImages = new ArrayList<BufferedImage>();
 	
 	public CalendarPage() {
-		this.template = Templates.TEMPLATE_SINGLE_IMAGE;
+		this.template = Templates.getRandomTemplate();
 	}
 	
 	public PageTemplate getTemplate() {
 		return this.template;
+	}
+	
+	public void setDropZoneImage(int zoneIndex, BufferedImage image) {
+		while (zoneIndex >= this.dropZoneImages.size()) {
+			this.dropZoneImages.add(null);
+		}
+		
+		this.dropZoneImages.set(zoneIndex, image);
+	}
+	
+	public ArrayList<BufferedImage> getDropZoneImages() {
+		return this.dropZoneImages;
 	}
 	
 	/**
