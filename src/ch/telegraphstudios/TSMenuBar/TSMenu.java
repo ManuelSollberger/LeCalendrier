@@ -27,6 +27,7 @@ public class TSMenu extends JFrame implements WindowFocusListener, MouseListener
 		this.addMouseListener(this);
 		this.setLayout(null);
 		this.setFocusable(false);
+		this.setFocusableWindowState(false);
 		this.setAlwaysOnTop(true);
 		
 		//Create content view

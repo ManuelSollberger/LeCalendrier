@@ -10,6 +10,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -21,7 +22,7 @@ import javax.swing.JRootPane;
  * This automatically sets up a title bar with a title and two window buttons (close and minimize).
  * Resizing is not supported as it is not needed by this application.
  */
-public class TSWindow extends JFrame implements MouseMotionListener, WindowFocusListener {
+public class TSWindow extends JFrame implements MouseMotionListener, WindowFocusListener, WindowListener {
 
 	public static final int DEFAULT_WIDTH = 960;
 	public static final int DEFAULT_HEIGHT = 520;
@@ -54,6 +55,7 @@ public class TSWindow extends JFrame implements MouseMotionListener, WindowFocus
 		this.setLayout(null);
 		this.setBackground(new Color(0, 0, 0, 0));
 		this.addWindowFocusListener(this);
+		this.addWindowListener(this);
 		
 		//Add title bar
 		this.titleBar = new TSWindowTitleBar(this);
@@ -180,14 +182,16 @@ public class TSWindow extends JFrame implements MouseMotionListener, WindowFocus
 
 	@Override
 	public void windowGainedFocus(WindowEvent e) {
+		TSMenuBar.getInstance().setLastFocusedWindow(e.getWindow());
+		
 		if (!this.children.contains(e.getOppositeWindow()) && !TSMenuBar.getInstance().equals(e.getOppositeWindow())) {
 			for (TSWindow child : this.children) {
 				if (child.getType() == Type.UTILITY) {
+					child.setFocusableWindowState(false);
 					child.setVisible(true);
+					child.setFocusableWindowState(true);
 				}
 			}
-			
-			TSMenuBar.getInstance().setLastFocusedWindow(e.getWindow());
 
 			TSMenuBar.getInstance().setFocusableWindowState(false);
 			TSMenuBar.getInstance().setVisible(true);
@@ -213,5 +217,32 @@ public class TSWindow extends JFrame implements MouseMotionListener, WindowFocus
 
 	@Override
 	public void mouseMoved(MouseEvent arg0) { }
+
+	@Override
+	public void windowActivated(WindowEvent e) { }
+
+	@Override
+	public void windowClosed(WindowEvent e) { }
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		for (TSWindow child : children) {
+			if (child.getType() == Type.UTILITY) {
+				child.setVisible(false);
+			}
+		}
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) { }
+
+	@Override
+	public void windowDeiconified(WindowEvent e) { }
+
+	@Override
+	public void windowIconified(WindowEvent e) { }
+
+	@Override
+	public void windowOpened(WindowEvent e) { }
 	
 }

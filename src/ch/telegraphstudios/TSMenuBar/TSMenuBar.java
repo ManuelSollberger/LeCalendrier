@@ -22,7 +22,7 @@ import javax.swing.SwingUtilities;
  * 
  * This class has the 'TS' (Telegraph Studios) prefix to declare that it can appear in different applications.
  */
-public class TSMenuBar extends JFrame implements MouseListener, WindowFocusListener {
+public class TSMenuBar extends JFrame implements MouseListener, WindowFocusListener, TSMenuItemCondition {
 	
 	public static final int MENU_BAR_HEIGHT = 24;
 
@@ -36,6 +36,11 @@ public class TSMenuBar extends JFrame implements MouseListener, WindowFocusListe
 	
 	private TSMenuBarItem selectedItem;
 	private Window lastFocusedWindow;
+	
+	/**
+	 * This constructor is here to create a new menu item condition.
+	 */
+	private TSMenuBar() { }
 	
 	/**
 	 * Instantiates a new menu bar. This should never be done externally because this is a singleton calss.
@@ -54,6 +59,8 @@ public class TSMenuBar extends JFrame implements MouseListener, WindowFocusListe
 		this.addMouseListener(this);
 		this.addWindowFocusListener(this);
 		this.addDefaultItems();
+		this.setFocusable(false);
+		this.setFocusableWindowState(false);
 		
 		this.repaint();
 	}
@@ -86,6 +93,7 @@ public class TSMenuBar extends JFrame implements MouseListener, WindowFocusListe
 				
 				//Add center window item
 				TSMenuItem centerWindowItem = new TSMenuItem("Center window");
+				centerWindowItem.setCondition(new TSMenuBar());
 				centerWindowItem.addMenuItemClickListener(new TSMenuItemClickListener() {
 					@Override
 					public void onClick() {
@@ -252,5 +260,14 @@ public class TSMenuBar extends JFrame implements MouseListener, WindowFocusListe
 
 	@Override
 	public void windowLostFocus(WindowEvent e) { }
+
+	@Override
+	public boolean isEnabled(TSMenuItem item) {
+		if (item.getTitle().equals("Center window")) {
+			return (TSMenuBar.getInstance().lastFocusedWindow != null);
+		}
+		
+		return true;
+	}
 	
 }

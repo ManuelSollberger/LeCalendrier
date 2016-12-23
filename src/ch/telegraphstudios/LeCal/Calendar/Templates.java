@@ -1,7 +1,16 @@
 package ch.telegraphstudios.LeCal.Calendar;
 
+import java.awt.Window;
 import java.util.ArrayList;
 import java.util.Random;
+
+import ch.telegraphstudios.LeCal.LeCalMain;
+import ch.telegraphstudios.LeCal.GUI.LCEditorWindow;
+import ch.telegraphstudios.TSMenuBar.TSMenu;
+import ch.telegraphstudios.TSMenuBar.TSMenuBar;
+import ch.telegraphstudios.TSMenuBar.TSMenuBarItem;
+import ch.telegraphstudios.TSMenuBar.TSMenuItem;
+import ch.telegraphstudios.TSMenuBar.TSMenuItemClickListener;
 
 /**
  * This class contains a list of default templates.
@@ -29,8 +38,61 @@ public class Templates {
 	 * Call this very early.
 	 */
 	public static void initializeTemplates() {
+		//Template menu bar item
+		TSMenuBarItem templateItem = new TSMenuBarItem("Templates");
+		
+		TSMenu templateMenu = new TSMenu();
+		templateItem.setMenu(templateMenu);
+		
+		TSMenuItem singleItem = new TSMenuItem("Single image");
+		singleItem.setCondition(new LeCalMain());
+		singleItem.addMenuItemClickListener(new TSMenuItemClickListener() {
+			@Override
+			public void onClick() {
+				Window focused = TSMenuBar.getInstance().getLastFocusedWindow();
+				if (focused instanceof LCEditorWindow) {
+					LCEditorWindow editor = (LCEditorWindow)focused;
+					editor.getDocument().getCurrentPage().setTemplate(getByName("SINGLE"));
+					editor.repaint();
+				}
+			}
+		});
+		templateMenu.addItem(singleItem);
+		
+		TSMenuItem doubleItem = new TSMenuItem("Double image");
+		doubleItem.setCondition(new LeCalMain());
+		doubleItem.addMenuItemClickListener(new TSMenuItemClickListener() {
+			@Override
+			public void onClick() {
+				Window focused = TSMenuBar.getInstance().getLastFocusedWindow();
+				if (focused instanceof LCEditorWindow) {
+					LCEditorWindow editor = (LCEditorWindow)focused;
+					editor.getDocument().getCurrentPage().setTemplate(getByName("DOUBLE"));
+					editor.repaint();
+				}
+			}
+		});
+		templateMenu.addItem(doubleItem);
+		
+		TSMenuItem tripleItem = new TSMenuItem("Triple image");
+		tripleItem.setCondition(new LeCalMain());
+		tripleItem.addMenuItemClickListener(new TSMenuItemClickListener() {
+			@Override
+			public void onClick() {
+				Window focused = TSMenuBar.getInstance().getLastFocusedWindow();
+				if (focused instanceof LCEditorWindow) {
+					LCEditorWindow editor = (LCEditorWindow)focused;
+					editor.getDocument().getCurrentPage().setTemplate(getByName("TRIPLE"));
+					editor.repaint();
+				}
+			}
+		});
+		templateMenu.addItem(tripleItem);
+		
+		TSMenuBar.getInstance().addMenuItem(templateItem);
+		
 		//Single image
-		TEMPLATE_SINGLE_IMAGE = new PageTemplate();
+		TEMPLATE_SINGLE_IMAGE = new PageTemplate("SINGLE");
 		DropZone mainDropZone = new DropZone();
 		mainDropZone.setBounds(0, 0, Calendar.WIDTH, Calendar.HEIGHT);
 		TEMPLATE_SINGLE_IMAGE.addDropZone(mainDropZone);
@@ -38,7 +100,7 @@ public class Templates {
 		
 		
 		//Double image
-		TEMPLATE_DOUBLE_IMAGE = new PageTemplate();
+		TEMPLATE_DOUBLE_IMAGE = new PageTemplate("DOUBLE");
 		DropZone doubleLeftZone = new DropZone();
 		doubleLeftZone.setBounds(0, 0, Calendar.WIDTH / 2, Calendar.HEIGHT);
 		TEMPLATE_DOUBLE_IMAGE.addDropZone(doubleLeftZone);
@@ -49,7 +111,7 @@ public class Templates {
 		
 		
 		//Triple image
-		TEMPLATE_TRIPLE_IMAGE = new PageTemplate();
+		TEMPLATE_TRIPLE_IMAGE = new PageTemplate("TRIPLE");
 		DropZone tripleLeftZone = new DropZone();
 		tripleLeftZone.setBounds(0, 0, Calendar.WIDTH / 2, Calendar.HEIGHT);
 		TEMPLATE_TRIPLE_IMAGE.addDropZone(tripleLeftZone);
@@ -65,6 +127,16 @@ public class Templates {
 	public static PageTemplate getRandomTemplate() {
 		int random = new Random().nextInt(templates.size());
 		return templates.get(random);
+	}
+	
+	public static PageTemplate getByName(String name) {
+		for (PageTemplate template : templates) {
+			if (template.getName().equals(name)) {
+				return template;
+			}
+		}
+		
+		return TEMPLATE_SINGLE_IMAGE;
 	}
 	
 }

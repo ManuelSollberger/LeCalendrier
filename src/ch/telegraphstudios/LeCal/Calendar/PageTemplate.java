@@ -10,9 +10,14 @@ import java.util.ArrayList;
 public class PageTemplate {
 
 	private ArrayList<DropZone> dropZones = new ArrayList<DropZone>();
+	private String name;
 	
-	public PageTemplate() {
-		
+	public PageTemplate(String name) {
+		this.name = name;
+	}
+	
+	public String getName() {
+		return this.name;
 	}
 	
 	public void addDropZone(DropZone dropZone) {

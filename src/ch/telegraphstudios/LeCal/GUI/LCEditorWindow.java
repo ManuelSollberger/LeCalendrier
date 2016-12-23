@@ -1,6 +1,9 @@
 package ch.telegraphstudios.LeCal.GUI;
 
 import java.awt.Graphics2D;
+import java.awt.Window.Type;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +15,8 @@ import ch.telegraphstudios.LeCal.Calendar.Calendar;
 import ch.telegraphstudios.LeCal.Calendar.DropZone;
 import ch.telegraphstudios.TSMenuBar.TSDroplet;
 import ch.telegraphstudios.TSMenuBar.TSFileDropListener;
+import ch.telegraphstudios.TSMenuBar.TSMenuBar;
+import ch.telegraphstudios.TSMenuBar.TSMenuItem;
 import ch.telegraphstudios.TSMenuBar.TSWindow;
 import ch.telegraphstudios.TSMenuBar.TSWindowPaintListener;
 
@@ -92,7 +97,7 @@ public class LCEditorWindow extends TSWindow implements TSWindowPaintListener, T
 					try {
 						BufferedImage image = ImageIO.read(file);
 						
-						this.document.getCurrentPage().setDropZoneImage(this.droplets.indexOf(source), image);
+						this.document.getCurrentPage().setDropZoneImage(this.droplets.indexOf(source), image, file.getAbsolutePath());
 						
 						this.repaint();
 					} catch (IOException e) {
@@ -100,6 +105,34 @@ public class LCEditorWindow extends TSWindow implements TSWindowPaintListener, T
 						e.printStackTrace();
 					}
 					
+				}
+			}
+		}
+	}
+
+	@Override
+	public void windowGainedFocus(WindowEvent e) {
+		super.windowGainedFocus(e);
+		
+		//Enable certain items if this editor is selected.
+		ArrayList<TSMenuItem> fileItems = TSMenuBar.getInstance().getMenuBarItem("File").getMenu().getItems();
+		for (TSMenuItem item : fileItems) {
+			if (item.getTitle().equals("Save...") || item.getTitle().equals("Export as PDF...")) {
+				item.setEnabled(true);
+			}
+		}
+	}
+
+	@Override
+	public void windowLostFocus(WindowEvent e) {
+		super.windowLostFocus(e);
+		
+		//Disable certain items if no editor is selected.
+		if (e.getOppositeWindow() != null && !e.getOppositeWindow().equals(TSMenuBar.getInstance())) {
+			ArrayList<TSMenuItem> fileItems = TSMenuBar.getInstance().getMenuBarItem("File").getMenu().getItems();
+			for (TSMenuItem item : fileItems) {
+				if (item.getTitle().equals("Save...") || item.getTitle().equals("Export as PDF...")) {
+					item.setEnabled(false);
 				}
 			}
 		}

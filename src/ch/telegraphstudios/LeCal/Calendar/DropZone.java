@@ -13,7 +13,7 @@ import java.awt.image.BufferedImage;
 public class DropZone {
 
 	private static final int STROKE_INSET = 16;
-	private static final int STROKE_THICKNESS = 4;
+	private static final int STROKE_THICKNESS = 8;
 	private static final int STROKE_RADIUS = 32;
 	private static final int STROKE_DASH = 40;
 	private static final Color STROKE_COLOR = new Color(0xCCCCCC); 
@@ -39,18 +39,19 @@ public class DropZone {
 	 * @param image
 	 */
 	public void paint(Graphics2D g, BufferedImage image) {
+		float modifier = 1;
 		if (image != null) {
-			g.drawImage(image, this.bounds.x, this.bounds.y, this.bounds.width, this.bounds.height, null);
+			g.drawImage(image, (int)(this.bounds.x * modifier), (int)(this.bounds.y * modifier), (int)(this.bounds.width * modifier), (int)(this.bounds.height * modifier), null);
 		} else {
 			g.setColor(Color.WHITE);
-			g.fillRect(this.bounds.x, this.bounds.y, this.bounds.width, this.bounds.height);
+			g.fillRect((int)(this.bounds.x * modifier), (int)(this.bounds.y * modifier), (int)(this.bounds.width * modifier), (int)(this.bounds.height * modifier));
 
 			// Draw lined rectangle
 			float dashes[] = {STROKE_DASH};
 			BasicStroke dashed = new BasicStroke(STROKE_THICKNESS, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dashes, 0.0f);
 			g.setStroke(dashed);
 			g.setColor(STROKE_COLOR);
-			g.draw(new RoundRectangle2D.Double(STROKE_INSET + this.bounds.x, STROKE_INSET + this.bounds.y, this.bounds.width - (STROKE_INSET * 2), this.bounds.height - (STROKE_INSET * 2), STROKE_RADIUS, STROKE_RADIUS));
+			g.draw(new RoundRectangle2D.Double((STROKE_INSET + this.bounds.x) * modifier, (STROKE_INSET + this.bounds.y) * modifier, (this.bounds.width - (STROKE_INSET * 2)) * modifier, (this.bounds.height - (STROKE_INSET * 2)) * modifier, STROKE_RADIUS, STROKE_RADIUS));
 		}
 	}
 

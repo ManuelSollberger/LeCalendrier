@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
-public class TSMenuItem extends JPanel implements MouseListener {
+public class TSMenuItem extends JPanel implements MouseListener, TSMenuItemCondition {
 	
 	public static final int MENU_ITEM_TOP_MARGIN = 2;
 	private static final int MENU_ITEM_LEFT_MARGIN = 16;
@@ -21,6 +21,7 @@ public class TSMenuItem extends JPanel implements MouseListener {
 	private boolean hovered;
 	private String title;
 	private TSMenu menu;
+	private TSMenuItemCondition condition;
 	
 	private ArrayList<TSMenuItemClickListener> clickListeners = new ArrayList<TSMenuItemClickListener>();
 	
@@ -30,6 +31,7 @@ public class TSMenuItem extends JPanel implements MouseListener {
 		this.updateSize();
 		this.addMouseListener(this);
 		this.setBackground(new Color(0, 0, 0, 1));
+		this.setCondition(this);
 	}
 	
 	@Override
@@ -40,7 +42,7 @@ public class TSMenuItem extends JPanel implements MouseListener {
 		
 		g2d.setFont(this.getFont());
 		
-		if (this.hovered) {
+		if (this.hovered && this.condition.isEnabled(this)) {
 			g2d.setPaint(new GradientPaint(0, 0, GraphicsUtils.darkerColor(Design.SELECTION_COLOR, -20), 0, this.getHeight(), Design.SELECTION_COLOR));
 		}
 		else {
@@ -51,6 +53,9 @@ public class TSMenuItem extends JPanel implements MouseListener {
 		
 		Dimension stringSize = GraphicsUtils.getStringSize(this.title, g2d);
 		g2d.setColor(Color.WHITE);
+		if (!this.condition.isEnabled(this)) {
+			g2d.setColor(new Color(0xBBBBBB));
+		}
 		g2d.drawString(this.title, TSMenuBarItem.MENU_BAR_ITEM_PADDING + MENU_ITEM_LEFT_MARGIN, this.getHeight() - stringSize.height / 2);
 	}
 	
@@ -61,6 +66,10 @@ public class TSMenuItem extends JPanel implements MouseListener {
 	public void setTitle(String title) {
 		this.title = title;
 		this.updateSize();
+	}
+	
+	public void setCondition(TSMenuItemCondition condition) {
+		this.condition = condition;
 	}
 	
 	/**
@@ -89,11 +98,13 @@ public class TSMenuItem extends JPanel implements MouseListener {
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		TSMenuBar.getInstance().setSelectedItem(null);
-		this.menu.close();
-		
-		for (TSMenuItemClickListener clickListener : clickListeners) {
-			clickListener.onClick();
+		if (this.condition.isEnabled(this)) {
+			TSMenuBar.getInstance().setSelectedItem(null);
+			this.menu.close();
+			
+			for (TSMenuItemClickListener clickListener : clickListeners) {
+				clickListener.onClick();
+			}
 		}
 	}
 
@@ -107,6 +118,11 @@ public class TSMenuItem extends JPanel implements MouseListener {
 	public void mouseExited(MouseEvent e) {
 		this.hovered = false;
 		this.repaint();
+	}
+
+	@Override
+	public boolean isEnabled(TSMenuItem item) {
+		return true;
 	}
 
 }
