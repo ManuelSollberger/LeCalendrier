@@ -7,7 +7,9 @@ import java.awt.event.WindowFocusListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 
 import javax.imageio.ImageIO;
 
@@ -70,7 +72,7 @@ public class LCEditorWindow extends TSWindow implements TSWindowPaintListener, T
 			this.contentView.add(droplet);
 		}
 		
-		this.setTitle("Page " + (this.document.getCurrentPageIndex() + 1) + " (" + this.document.getName() + ") - Editor");
+		this.setTitle("" + new DateFormatSymbols().getMonths()[this.document.getCurrentPageIndex()] + " (" + this.document.getName() + ") - Editor");
 		
 		this.repaint();
 	}
