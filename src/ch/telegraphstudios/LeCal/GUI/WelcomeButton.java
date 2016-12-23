@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import ch.telegraphstudios.TSMenuBar.Design;
 import ch.telegraphstudios.TSMenuBar.GraphicsUtils;
 
+
 /**
  * This button is used in the welcome screen.
  */

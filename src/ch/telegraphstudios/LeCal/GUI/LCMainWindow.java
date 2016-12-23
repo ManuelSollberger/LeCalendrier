@@ -13,6 +13,7 @@ import ch.telegraphstudios.TSMenuBar.Design;
 import ch.telegraphstudios.TSMenuBar.TSLabel;
 import ch.telegraphstudios.TSMenuBar.TSWindow;
 
+
 /**
  * This is the welcome screen that displays the first options.
  */

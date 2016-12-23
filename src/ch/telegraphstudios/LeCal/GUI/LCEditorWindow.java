@@ -22,6 +22,7 @@ import ch.telegraphstudios.TSMenuBar.TSMenuItem;
 import ch.telegraphstudios.TSMenuBar.TSWindow;
 import ch.telegraphstudios.TSMenuBar.TSWindowPaintListener;
 
+
 public class LCEditorWindow extends TSWindow implements TSWindowPaintListener, TSFileDropListener {
 	
 	private Calendar document;
